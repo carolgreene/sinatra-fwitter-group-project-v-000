@@ -4,7 +4,7 @@ class ApplicationController < Sinatra::Base
 
   configure do
     enable :sessions
-    set :session_secret, "secret"
+    set :session_secret, "password_security"
     set :public_folder, 'public'
     set :views, 'app/views'
   end
@@ -13,15 +13,17 @@ class ApplicationController < Sinatra::Base
     erb :'homepage'
   end
 
-  get '/signup' do
-    erb :'/users/create_user'
+
+  helpers do
+    def logged_in?
+      !!session[:user_id]
+    end
+
+    def current_user
+      User.find(session[:user_id])
+    end
   end
 
-  post '/signup' do
-    @user = User.find_by(email: params[:email])
-    session[:user_id] = @user.id
-    redirect '/users/index'
-  end
 
 
 end
